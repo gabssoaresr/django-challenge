@@ -1,0 +1,125 @@
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="sales_report"
+              language="java"
+              pageWidth="595"
+              pageHeight="842"
+              orientation="Landscape"
+              columnWidth="555"
+              leftMargin="20"
+              rightMargin="20"
+              topMargin="20"
+              bottomMargin="20"
+              uuid="6e7b9a79-f50e-42c3-b5ed-0bba381c3a4d">
+    <queryString language="SQL">
+        <![CDATA[
+        (
+            SELECT TO_CHAR(COALESCE(order_date, CURRENT_DATE), 'YYYY-MM-DD') AS order_date,
+                SUM(total_order) / 100 AS total_sales
+            FROM "order_order"
+            WHERE TO_CHAR(COALESCE(order_date, CURRENT_DATE), 'YYYY-MM') = TO_CHAR(CURRENT_DATE, 'YYYY-MM')
+                AND payied_at IS NOT NULL  -- Aqui está a condição para payied_at não nulo
+            GROUP BY TO_CHAR(COALESCE(order_date, CURRENT_DATE), 'YYYY-MM-DD')
+            ORDER BY TO_CHAR(COALESCE(order_date, CURRENT_DATE), 'YYYY-MM-DD')
+        )
+        UNION 
+        (
+            SELECT TO_CHAR(COALESCE(order_date, CURRENT_DATE), 'YYYY-MM') AS order_date,
+                SUM(total_order) / 100 AS total_sales
+            FROM "order_order"
+            WHERE TO_CHAR(COALESCE(order_date, CURRENT_DATE), 'YYYY-MM') = TO_CHAR(CURRENT_DATE, 'YYYY')
+                AND payied_at IS NOT NULL  -- Aqui está a condição para payied_at não nulo
+            GROUP BY TO_CHAR(COALESCE(order_date, CURRENT_DATE), 'YYYY-MM')
+            ORDER BY TO_CHAR(COALESCE(order_date, CURRENT_DATE), 'YYYY-MM')
+        )
+        ]]>
+    </queryString>
+    <field name="order_date" class="java.lang.String"/>
+    <field name="total_sales" class="java.lang.Double"/>
+    <title>
+        <band height="70" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="10" width="555" height="30" uuid="cc7029d7-f1e8-4ec5-9384-ff75490e8e0f"/>
+                <textElement markup="html">
+                    <font size="20" isBold="true"/>
+                </textElement>
+                <text><![CDATA[<b>SF Café</b>]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="40" width="555" height="20" uuid="cc7029d7-f1e8-4ec5-9384-ff75490e8e0f"/>
+                <textElement markup="html">
+                    <font size="16"/>
+                </textElement>
+                <text><![CDATA[Relatório Anual]]></text>
+            </staticText>
+        </band>
+    </title>
+    <summary>
+        <band height="500">
+            <!-- Novo gráfico de barras para vendas mensais -->
+            <barChart>
+                <chart>
+                    <reportElement x="0" y="0" width="555" height="250" uuid="1ee89834-11b5-4997-8d59-54f23c1d94f6"/>
+                    <chartTitle>
+                        <font size="14" isBold="true"/>
+                        <titleExpression><![CDATA["Vendas Mensais"]]></titleExpression>
+                    </chartTitle>
+                    <chartSubtitle/>
+                    <chartLegend/>
+                </chart>
+                <categoryDataset>
+                    <categorySeries>
+                        <seriesExpression><![CDATA[$F{order_date}]]></seriesExpression>
+                        <categoryExpression><![CDATA[$F{total_sales}]]></categoryExpression>
+                        <valueExpression><![CDATA[$F{total_sales}]]></valueExpression>
+                    </categorySeries>
+                </categoryDataset>
+                <barPlot>
+                    <plot/>
+                    <itemLabel>
+                        <font fontName="Arial" size="12" isBold="true"/>
+                    </itemLabel>
+                    <categoryAxisFormat>
+                        <axisFormat/>
+                    </categoryAxisFormat>
+                    <valueAxisFormat>
+                        <axisFormat/>
+                    </valueAxisFormat>
+                </barPlot>
+            </barChart>
+            
+            <!-- Gráfico existente para vendas diárias -->
+            <barChart>
+                <chart>
+                    <reportElement x="0" y="250" width="555" height="250" uuid="787b2a26-dc98-4319-a517-08b675f7df42"/>
+                    <chartTitle>
+                        <font size="14" isBold="true"/>
+                        <titleExpression><![CDATA["Vendas Diárias do Mês Atual"]]></titleExpression>
+                    </chartTitle>
+                    <chartSubtitle/>
+                    <chartLegend/>
+                </chart>
+                <categoryDataset>
+                    <categorySeries>
+                        <seriesExpression><![CDATA[$F{order_date}]]></seriesExpression>
+                        <categoryExpression><![CDATA[$F{total_sales}]]></categoryExpression>
+                        <valueExpression><![CDATA[$F{total_sales}]]></valueExpression>
+                    </categorySeries>
+                </categoryDataset>
+                <barPlot>
+                    <plot/>
+                    <itemLabel>
+                        <font fontName="Arial" size="12" isBold="true"/>
+                    </itemLabel>
+                    <categoryAxisFormat>
+                        <axisFormat/>
+                    </categoryAxisFormat>
+                    <valueAxisFormat>
+                        <axisFormat/>
+                    </valueAxisFormat>
+                </barPlot>
+            </barChart>
+        </band>
+    </summary>
+</jasperReport>
