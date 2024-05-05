@@ -62,7 +62,7 @@ python3 frontend/gui/main_window.py
 **Atenção** Se o computador não reconhecer o módulo `frontend` rode o comando:
 
 ```bash
-export PYTHONPATH=/your/path/salaryfits/
+export PYTHONPATH=/your/path/to/project/root
 ```
 
 ## Especificação dos endpoints API
