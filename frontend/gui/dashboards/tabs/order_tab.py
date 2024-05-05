@@ -291,11 +291,13 @@ class OrderTab(tk.Frame):
 
     def on_order_details_window_close(self):
         if hasattr(self, 'order_details_window'):
+            self.next_details_button.destroy()
             self.order_details_window.destroy()
             del self.order_details_window 
 
     def load_order_details(self):
-        self.add_order_details_buttons()
+        if not hasattr(self, 'next_details_button'):  
+            self.add_order_details_buttons()
 
         response = requests.get(
             f"{self.base_url}orders/{self.selected_order['id']}/order-details/?page={self.order_details_page}",
